@@ -1,8 +1,6 @@
 package by.itransition.backend.entity;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,12 +10,11 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
 @Entity
-@NoArgsConstructor
-@EqualsAndHashCode
-public class Role {
+public class Image {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private Integer id;
+    private String name;
 
-    private String role;
+    private String path;
 }
