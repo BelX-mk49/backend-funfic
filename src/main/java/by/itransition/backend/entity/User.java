@@ -11,6 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import java.util.Collection;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -27,6 +28,9 @@ public class User  implements UserDetails {
     private String username;
     @NotBlank(message = "Password can't be empty")
     private String password;
+    @Transient
+    private String passwordConfirm;
+
     private boolean active;
 
     @Email(message = "Email isn't correct")
@@ -38,13 +42,12 @@ public class User  implements UserDetails {
     @JoinColumn
     private Image avatar;
 
-    @OneToOne
-    @JoinColumn
-    private Role role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return getRoles();
     }
 
     @Override

@@ -16,7 +16,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Comment {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private String commentId;
+    private Long commentId;
 
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private String createDate;
