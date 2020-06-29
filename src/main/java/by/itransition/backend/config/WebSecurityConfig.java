@@ -30,15 +30,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         http
-                .authorizeRequests()
-                .antMatchers("/login" ,"/user/**", "/registration/add", "/activate/*", "/static/**").permitAll()
+                .csrf().disable().cors()
+                .and()
+                    .authorizeRequests()
+                    .mvcMatchers("/post").permitAll()
+                    .mvcMatchers("/registration/**").permitAll()
+                    .mvcMatchers("/user/**").hasAnyRole("ADMIN")
+                    .anyRequest().hasRole("USER")
+                .and()
+                    .httpBasic()
                 .and()
                     .formLogin()
                     .loginPage("/login")
                     .permitAll()
                 .and()
-                    .logout()
-                    .permitAll();
+                    .logout().logoutUrl("/logout").invalidateHttpSession(true).deleteCookies("JSESSIONID");
     }
 
     @Override

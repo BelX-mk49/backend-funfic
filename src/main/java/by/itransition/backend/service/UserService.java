@@ -1,7 +1,7 @@
 package by.itransition.backend.service;
 
-import by.itransition.backend.entity.Role;
 import by.itransition.backend.entity.User;
+import by.itransition.backend.repo.RoleRepository;
 import by.itransition.backend.repo.UserRepository;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,9 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -28,11 +29,13 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailSender mailSender;
+    private final RoleRepository roleRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, MailSender mailSender) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, MailSender mailSender, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailSender = mailSender;
+        this.roleRepository = roleRepository;
     }
 
     public User findById(Long id){
@@ -45,7 +48,7 @@ public class UserService implements UserDetailsService {
 
     public User addUser(User user) {
         user.setActive(false);
-        user.setRoles(Collections.singleton(new Role("ROLE_USER")));
+        user.getRoles().add(roleRepository.findByRole("USER"));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         sendMessage(user);
         return userRepository.save(user);
@@ -68,6 +71,17 @@ public class UserService implements UserDetailsService {
 
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    public boolean activateUser(String code) {
+        User user = userRepository.findByActivationCode(code);
+        if (user != null) {
+            user.setActive(true);
+            userRepository.save(user);
+            return TRUE;
+        }else {
+            return FALSE;
+        }
     }
 
     @Override

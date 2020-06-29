@@ -25,25 +25,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/registration")
-    public ResponseEntity<User> add(@RequestBody User user) {
-        if (user.getPassword().isEmpty() && user.getPasswordConfirm().isEmpty()) {
-            return new ResponseEntity("redundant param: password can't be empty", HttpStatus.NOT_ACCEPTABLE);
-        }
-        if (user.getUsername() == null || user.getUsername().trim().length() == 0) {
-            return new ResponseEntity("missed param: username", HttpStatus.NOT_ACCEPTABLE);
-        }
-        return ResponseEntity.ok(userService.addUser(user)); // возвращаем созданный объект со сгенерированным id
-
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id) {
 
         User user = null;
         try {
             user = userService.findById(id);
-        } catch (NoSuchElementException e) { // если объект не будет найден
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
             return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
@@ -59,7 +47,7 @@ public class UserController {
             e.printStackTrace();
             return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
-        return new ResponseEntity(HttpStatus.OK); // просто отправляем статус 200 (операция прошла успешно)
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/all")
