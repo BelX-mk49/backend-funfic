@@ -16,6 +16,7 @@ import java.util.List;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
+import static java.util.UUID.randomUUID;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
@@ -46,7 +47,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public User addUser(User user) {
+    public User add(User user) {
         user.setActive(false);
         user.getRoles().add(roleRepository.findByRole("USER"));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -54,8 +55,31 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public User update(User user, String email, String password) {
+        String userEmail = user.getEmail();
+        boolean isEmailChanged = validationMail(email, userEmail);
+        if (isEmailChanged) {
+            user.setEmail(email);
+            user.setActive(false);
+            if (!isEmpty(email)) {
+                user.setActivationCode(randomUUID().toString());
+            }
+        }
+        if (!isEmpty(password)) {
+            user.setPassword(passwordEncoder.encode(password));
+        }
+        if (isEmailChanged) {
+            sendMessage(user);
+        }
+        return userRepository.save(user);
+    }
+
     public void deleteById(Long id){
         userRepository.deleteById(id);
+    }
+
+    public User findByUsername(String username){
+        return userRepository.findByUsername(username);
     }
 
     private void sendMessage(User user) {
@@ -82,6 +106,10 @@ public class UserService implements UserDetailsService {
         }else {
             return FALSE;
         }
+    }
+
+    private boolean validationMail(String email, String userEmail) {
+        return email != null && !email.equals(userEmail) || userEmail != null && !userEmail.equals(email);
     }
 
     @Override

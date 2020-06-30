@@ -21,18 +21,6 @@ public class RegistrationController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public ResponseEntity<User> add(@RequestBody User user) {
-        if (user.getPassword().isEmpty() && user.getPasswordConfirm().isEmpty()) {
-            return new ResponseEntity("redundant param: password can't be empty", HttpStatus.NOT_ACCEPTABLE);
-        }
-        if (user.getUsername() == null || user.getUsername().trim().length() == 0) {
-            return new ResponseEntity("missed param: username", HttpStatus.NOT_ACCEPTABLE);
-        }
-        return ResponseEntity.ok(userService.addUser(user));
-
-    }
-
     @GetMapping("/activate/{code}")
     public ResponseEntity<Boolean> activate(@PathVariable String code){
         return ResponseEntity.ok(userService.activateUser(code));
