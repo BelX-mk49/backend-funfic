@@ -1,17 +1,17 @@
 package by.itransition.backend.service;
 
-import by.itransition.backend.entity.User;
+import by.itransition.backend.model.ERole;
+import by.itransition.backend.model.Role;
+import by.itransition.backend.model.User;
 import by.itransition.backend.repo.RoleRepository;
 import by.itransition.backend.repo.UserRepository;
-import org.springframework.security.authentication.LockedException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -21,7 +21,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
 @Transactional
-public class UserService implements UserDetailsService {
+public class UserService {
 
     public static final String ACTIVATE_ACCOUNT_MESSAGE = "Hello, Admin! \n" +
             "Someone with username %s and email %s want to registration in Learn management system." +
@@ -48,8 +48,12 @@ public class UserService implements UserDetailsService {
     }
 
     public User add(User user) {
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        roles.add(userRole);
         user.setActive(false);
-        user.getRoles().add(roleRepository.findByRole("USER"));
+        user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         sendMessage(user);
         return userRepository.save(user);
@@ -79,7 +83,8 @@ public class UserService implements UserDetailsService {
     }
 
     public User findByUsername(String username){
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     private void sendMessage(User user) {
@@ -110,18 +115,6 @@ public class UserService implements UserDetailsService {
 
     private boolean validationMail(String email, String userEmail) {
         return email != null && !email.equals(userEmail) || userEmail != null && !userEmail.equals(email);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new LockedException("User not found");
-        }
-        if (!user.isActive()) {
-            throw new LockedException("email not activated");
-        }
-        return user;
     }
 
 

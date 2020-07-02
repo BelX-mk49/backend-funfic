@@ -1,4 +1,4 @@
-package by.itransition.backend.entity;
+package by.itransition.backend.model;
 
 import lombok.Data;
 

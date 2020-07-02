@@ -1,6 +1,6 @@
 package by.itransition.backend.controller;
 
-import by.itransition.backend.entity.User;
+import by.itransition.backend.model.User;
 import by.itransition.backend.search.UserSearchValues;
 import by.itransition.backend.service.UserService;
 import org.springframework.dao.EmptyResultDataAccessException;

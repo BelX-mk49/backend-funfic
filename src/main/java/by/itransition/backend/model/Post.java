@@ -1,4 +1,4 @@
-package by.itransition.backend.entity;
+package by.itransition.backend.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,17 +19,26 @@ import static org.hibernate.annotations.FetchMode.SELECT;
 @Entity
 @NoArgsConstructor
 @EqualsAndHashCode
-public class Genre {
+public class Post {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    private String genreName;
+    private String title;
+    private String shortContent;
+
+    private String comment;
+    private Integer rating;
+
+    @ManyToOne
+    @JoinColumn
+    private User user;
 
     @Fetch(value = SELECT)
     @ManyToMany(fetch = EAGER, cascade = REMOVE)
     @JoinTable(name = "genre_post",
-            joinColumns = {@JoinColumn(name = "genre_id")},
-            inverseJoinColumns = {@JoinColumn (name = "post_id")})
-    private Set<Post> posts = new HashSet<>();
+            joinColumns = {@JoinColumn(name = "post_id")},
+            inverseJoinColumns = {@JoinColumn (name = "genre_id")})
+    private Set<Genre> genres = new HashSet<>();
+
 }

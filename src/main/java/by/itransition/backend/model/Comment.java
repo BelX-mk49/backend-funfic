@@ -1,4 +1,4 @@
-package by.itransition.backend.entity;
+package by.itransition.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
