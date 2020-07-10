@@ -1,12 +1,18 @@
 package by.itransition.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotEmpty;
+import java.time.Instant;
 
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
@@ -16,14 +22,14 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Comment {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Long commentId;
-
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    private String createDate;
-
-    private String body;
-
-    @ManyToOne
-    @JoinColumn
+    private Long id;
+    @NotEmpty
+    private String text;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "postId", referencedColumnName = "id")
+    private Post post;
+    private Instant createdDate;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "userId", referencedColumnName = "id")
     private User user;
 }
