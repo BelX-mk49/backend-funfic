@@ -4,20 +4,19 @@ import by.itransition.backend.model.ERole;
 import by.itransition.backend.model.Role;
 import by.itransition.backend.model.User;
 import by.itransition.backend.payload.request.LoginRequest;
+import by.itransition.backend.payload.request.RefreshTokenRequest;
 import by.itransition.backend.payload.request.SignupRequest;
-import by.itransition.backend.payload.resposne.JwtResponse;
+import by.itransition.backend.payload.resposne.AuthenticationResponse;
 import by.itransition.backend.payload.resposne.MessageResponse;
 import by.itransition.backend.repo.RoleRepository;
 import by.itransition.backend.repo.UserRepository;
 import by.itransition.backend.security.jwt.JwtUtils;
-import by.itransition.backend.security.services.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,9 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
@@ -44,6 +41,7 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final MailSender mailSender;
+    private final RefreshTokenService refreshTokenService;
 
     public static final String ACTIVATE_ACCOUNT_MESSAGE = "Hello, %s! \n " +
             "Thank you for registering on Fanfic" +
@@ -51,24 +49,17 @@ public class AuthService {
             "http://localhost:8080/api/auth/activate/%s \n" +
             "Thank You";
 
-    public ResponseEntity<?> login(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow();
-        if (!user.isActive()) {
-            throw new LockedException("email not activated");
-        }
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+                loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String token = jwtUtils.generateJwtToken(authenticate);
+        return AuthenticationResponse.builder()
+                .authenticationToken(token)
+                .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+                .expiresAt(Instant.now().plusMillis(jwtUtils.getJwtExpirationMs()))
+                .username(loginRequest.getUsername())
+                .build();
     }
 
     public ResponseEntity<?> signup (SignupRequest signupRequest) {
@@ -96,6 +87,17 @@ public class AuthService {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        String token = jwtUtils.generateTokenWithUserName(refreshTokenRequest.getUsername());
+        return AuthenticationResponse.builder()
+                .authenticationToken(token)
+                .refreshToken(refreshTokenRequest.getRefreshToken())
+                .expiresAt(Instant.now().plusMillis(jwtUtils.getJwtExpirationMs()))
+                .username(refreshTokenRequest.getUsername())
+                .build();
+    }
+
     public void activateUser(String code) {
         User user = userRepository.findByActivationCode(code);
         if (user != null) {
@@ -110,10 +112,9 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public User getCurrentUser() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
-                getContext().getAuthentication().getPrincipal();
-        return userRepository.findByUsername(principal.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal.getUsername()));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + authentication.getName()));
     }
 
     public void sendMessage(User user) {
@@ -152,4 +153,8 @@ public class AuthService {
         return roles;
     }
 
+    public boolean isLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+    }
 }

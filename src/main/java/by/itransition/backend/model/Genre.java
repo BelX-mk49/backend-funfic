@@ -1,7 +1,8 @@
 package by.itransition.backend.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -17,9 +18,10 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
-@Entity
+@AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@Entity
+@Builder
 public class Genre {
     @Id
     @GeneratedValue(strategy = IDENTITY)

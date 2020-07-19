@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
@@ -21,31 +20,23 @@ import java.util.Set;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class User {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
-
+    private Long userId;
     @NotBlank(message = "Username can't be empty")
     private String username;
-
     @NotBlank(message = "Password can't be empty")
     private String password;
-    @Transient
-    private String passwordConfirm;
-
     private boolean active;
-
     @Email(message = "Email isn't correct")
     @NotBlank(message = "Email can't be empty")
     private String email;
     private String activationCode;
-
     private Instant created;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -4,14 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
-    @NotBlank
-    private String username;
-    @NotBlank
-    private String password;
+public class PostRequest {
+    private Long postId;
+    private String genreName;
+    private String postName;
+    private String url;
+    private String description;
 }

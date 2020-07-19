@@ -1,7 +1,9 @@
 package by.itransition.backend.controller;
 
 import by.itransition.backend.payload.request.LoginRequest;
+import by.itransition.backend.payload.request.RefreshTokenRequest;
 import by.itransition.backend.payload.request.SignupRequest;
+import by.itransition.backend.payload.resposne.AuthenticationResponse;
 import by.itransition.backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,7 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    final AuthService authService;
+    private final AuthService authService;
 
     public AuthController( AuthService authService) {
         this.authService = authService;
@@ -32,8 +34,13 @@ public class AuthController {
         return new ResponseEntity<>("Account Activated Successfully", OK);
     }
 
+    @PostMapping("/refresh/token")
+    public AuthenticationResponse refreshTokens(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return authService.refreshToken(refreshTokenRequest);
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest);
     }
 

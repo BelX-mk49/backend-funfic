@@ -1,6 +1,6 @@
 package by.itransition.backend.model;
 
-import by.itransition.backend.exception.FunficException;
+import by.itransition.backend.exceptions.FunficException;
 
 import java.util.Arrays;
 

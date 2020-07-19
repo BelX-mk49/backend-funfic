@@ -26,7 +26,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Post {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private Long postId;
     @NotBlank(message = "Post Name cannot be empty or Null")
     private String postName;
     @Nullable
@@ -36,11 +36,11 @@ public class Post {
     private String description;
     private Integer voteCount = 0;
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "userId", referencedColumnName = "id")
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;
     private Instant createdDate;
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "genre_id", referencedColumnName = "id")
+    @JoinColumn(name = "id", referencedColumnName = "id")
     private Genre genre;
 
 }

@@ -9,9 +9,9 @@ import javax.validation.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
+public class RefreshTokenRequest {
     @NotBlank
+    private String refreshToken;
     private String username;
-    @NotBlank
-    private String password;
 }
+
