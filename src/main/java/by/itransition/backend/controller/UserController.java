@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.NoSuchElementException;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://frontend-fanfic.herokuapp.com/")
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
