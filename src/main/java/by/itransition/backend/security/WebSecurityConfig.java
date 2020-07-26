@@ -67,17 +67,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtTokenProvider));
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*").allowedMethods("*");
-    }
-
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(@NotNull CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("*").allowedMethods("*");
+                registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*")
+                        .allowedHeaders("*");
             }
         };
     }
