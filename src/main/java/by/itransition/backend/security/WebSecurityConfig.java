@@ -16,8 +16,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 @Configuration
 @EnableWebSecurity
@@ -48,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors()
+        http.cors().configurationSource(corsConfigurationSource())
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
@@ -65,6 +73,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
                 .csrf().disable();
 
         http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtTokenProvider));
+    }
+
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        List<String> allowOrigins = Arrays.asList("*");
+        configuration.setAllowedOrigins(allowOrigins);
+        configuration.setAllowedMethods(singletonList("*"));
+        configuration.setAllowedHeaders(singletonList("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
