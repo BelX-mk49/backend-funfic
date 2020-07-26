@@ -8,9 +8,9 @@ import by.itransition.backend.model.Post;
 import by.itransition.backend.model.User;
 import by.itransition.backend.payload.request.PostRequest;
 import by.itransition.backend.payload.resposne.PostResponse;
-import by.itransition.backend.repo.GenreRepository;
-import by.itransition.backend.repo.PostRepository;
-import by.itransition.backend.repo.UserRepository;
+import by.itransition.backend.repository.GenreRepository;
+import by.itransition.backend.repository.PostRepository;
+import by.itransition.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,13 +29,12 @@ public class PostService {
     private final PostRepository postRepository;
     private final GenreRepository genreRepository;
     private final UserRepository userRepository;
-    private final AuthService authService;
     private final PostMapper postMapper;
 
     public void save(PostRequest postRequest) {
         Genre genre = genreRepository.findByName(postRequest.getGenreName())
                 .orElseThrow(() -> new GenreNotFoundException(postRequest.getGenreName()));
-        postRepository.save(postMapper.map(postRequest, genre, authService.getCurrentUser()));
+        postRepository.save(postMapper.map(postRequest, genre, postRequest.getUser()));
     }
 
     @Transactional(readOnly = true)

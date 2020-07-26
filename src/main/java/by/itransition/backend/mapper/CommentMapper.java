@@ -1,6 +1,7 @@
 package by.itransition.backend.mapper;
 
-import by.itransition.backend.dto.CommentsDto;
+import by.itransition.backend.payload.request.CommentsRequest;
+import by.itransition.backend.payload.resposne.CommentsResponse;
 import by.itransition.backend.model.Comment;
 import by.itransition.backend.model.Post;
 import by.itransition.backend.model.User;
@@ -10,13 +11,13 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "text", source = "commentsDto.text")
+    @Mapping(target = "text", source = "commentsRequest.text")
     @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
     @Mapping(target = "post", source = "post")
     @Mapping(target = "user", source = "user")
-    Comment map(CommentsDto commentsDto, Post post, User user);
+    Comment map(CommentsRequest commentsRequest, Post post, User user);
 
     @Mapping(target = "postId", expression = "java(comment.getPost().getPostId())")
     @Mapping(target = "userName", expression = "java(comment.getUser().getUsername())")
-    CommentsDto mapToDto(Comment comment);
+    CommentsResponse mapToDto(Comment comment);
 }

@@ -7,9 +7,9 @@ import by.itransition.backend.model.Vote;
 import by.itransition.backend.model.VoteType;
 import by.itransition.backend.payload.request.PostRequest;
 import by.itransition.backend.payload.resposne.PostResponse;
-import by.itransition.backend.repo.CommentRepository;
-import by.itransition.backend.repo.VoteRepository;
-import by.itransition.backend.service.AuthService;
+import by.itransition.backend.repository.CommentRepository;
+import by.itransition.backend.repository.VoteRepository;
+import by.itransition.backend.service.UserServiceImpl;
 import com.github.marlonlom.utilities.timeago.TimeAgo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -28,7 +28,7 @@ public abstract class PostMapper {
     @Autowired
     private VoteRepository voteRepository;
     @Autowired
-    private AuthService authService;
+    private UserServiceImpl userService;
 
     @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
     @Mapping(target = "description", source = "postRequest.description")
@@ -63,10 +63,10 @@ public abstract class PostMapper {
     }
 
     private boolean checkVoteType(Post post, VoteType voteType) {
-        if (authService.isLoggedIn()) {
+        if (userService.isLoggedIn()) {
             Optional<Vote> voteForPostByUser =
                     voteRepository.findTopByPostAndUserOrderByVoteIdDesc(post,
-                            authService.getCurrentUser());
+                            userService.getCurrentUser());
             return voteForPostByUser.filter(vote -> vote.getVoteType().equals(voteType))
                     .isPresent();
         }

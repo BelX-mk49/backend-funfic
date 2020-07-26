@@ -1,7 +1,7 @@
 package by.itransition.backend.security.services;
 
 import by.itransition.backend.model.User;
-import by.itransition.backend.repo.UserRepository;
+import by.itransition.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,9 +17,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
-
+        User user = userRepository.findByUsername(username).orElse(null);
+        if(user == null) {
+            throw new UsernameNotFoundException(username);
+        }
         return UserDetailsImpl.build(user);
     }
 

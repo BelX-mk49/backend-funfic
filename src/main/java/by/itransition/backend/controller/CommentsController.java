@@ -1,6 +1,7 @@
 package by.itransition.backend.controller;
 
-import by.itransition.backend.dto.CommentsDto;
+import by.itransition.backend.payload.request.CommentsRequest;
+import by.itransition.backend.payload.resposne.CommentsResponse;
 import by.itransition.backend.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,19 +26,19 @@ public class CommentsController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<Void> createComment(@RequestBody CommentsDto commentsDto) {
-        commentService.save(commentsDto);
+    public ResponseEntity<Void> createComment(@RequestBody CommentsRequest commentsRequest) {
+        commentService.save(commentsRequest);
         return new ResponseEntity<>(CREATED);
     }
 
     @GetMapping("/by-post/{postId}")
-    public ResponseEntity<List<CommentsDto>> getAllCommentsForPost(@PathVariable Long postId) {
+    public ResponseEntity<List<CommentsResponse>> getAllCommentsForPost(@PathVariable Long postId) {
         return ResponseEntity.status(OK)
                 .body(commentService.getAllCommentsForPost(postId));
     }
 
     @GetMapping("/by-user/{userName}")
-    public ResponseEntity<List<CommentsDto>> getAllCommentsForUser(@PathVariable String userName){
+    public ResponseEntity<List<CommentsResponse>> getAllCommentsForUser(@PathVariable String userName){
         return ResponseEntity.status(OK)
                 .body(commentService.getAllCommentsForUser(userName));
     }

@@ -1,4 +1,4 @@
-package by.itransition.backend.repo;
+package by.itransition.backend.repository;
 
 import by.itransition.backend.model.Genre;
 import org.springframework.data.jpa.repository.JpaRepository;

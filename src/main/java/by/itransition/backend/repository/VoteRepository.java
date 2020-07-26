@@ -1,4 +1,4 @@
-package by.itransition.backend.repo;
+package by.itransition.backend.repository;
 
 import by.itransition.backend.model.Post;
 import by.itransition.backend.model.User;

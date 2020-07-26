@@ -1,7 +1,7 @@
 create table comment
 (
     id           bigint not null auto_increment,
-    created_date datetime(6),
+    created_date datetime,
     text         varchar(255),
     post_id      bigint,
     user_id      bigint,
@@ -10,7 +10,7 @@ create table comment
 create table genre
 (
     id           bigint not null auto_increment,
-    created_date datetime(6),
+    created_date datetime,
     description  varchar(255),
     name         varchar(255),
     user_user_id bigint,
@@ -24,7 +24,7 @@ create table genre_posts
 create table post
 (
     post_id      bigint not null auto_increment,
-    created_date datetime(6),
+    created_date datetime,
     description  longtext,
     post_name    varchar(255),
     url          varchar(255),
@@ -33,35 +33,17 @@ create table post
     user_id      bigint,
     primary key (post_id)
 ) engine = InnoDB;
-create table refresh_token
-(
-    id           bigint not null auto_increment,
-    created_date datetime(6),
-    token        varchar(255),
-    primary key (id)
-) engine = InnoDB;
-create table roles
-(
-    role_id integer not null auto_increment,
-    name    varchar(20),
-    primary key (role_id)
-) engine = InnoDB;
 create table user
 (
     user_id         bigint not null auto_increment,
     activation_code varchar(255),
     active          bit    not null,
-    created         datetime(6),
+    created         datetime,
     email           varchar(255),
     password        varchar(255),
+    role            varchar(255),
     username        varchar(255),
     primary key (user_id)
-) engine = InnoDB;
-create table user_roles
-(
-    user_id bigint  not null,
-    role_id integer not null,
-    primary key (user_id, role_id)
 ) engine = InnoDB;
 create table vote
 (
@@ -87,10 +69,6 @@ alter table post
     add constraint FKr0ti0bxr5p8s1456apqjqjl4s foreign key (id) references genre (id);
 alter table post
     add constraint FK72mt33dhhs48hf9gcqrq4fxte foreign key (user_id) references user (user_id);
-alter table user_roles
-    add constraint FKh8ciramu9cc9q3qcqiv4ue8a6 foreign key (role_id) references roles (role_id);
-alter table user_roles
-    add constraint FK55itppkw3i07do3h7qoclqd4k foreign key (user_id) references user (user_id);
 alter table vote
     add constraint FKl3c067ewaw5xktl5cjvniv3e9 foreign key (post_id) references post (post_id);
 alter table vote

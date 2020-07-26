@@ -5,8 +5,8 @@ import by.itransition.backend.exceptions.FunficException;
 import by.itransition.backend.exceptions.PostNotFoundException;
 import by.itransition.backend.model.Post;
 import by.itransition.backend.model.Vote;
-import by.itransition.backend.repo.PostRepository;
-import by.itransition.backend.repo.VoteRepository;
+import by.itransition.backend.repository.PostRepository;
+import by.itransition.backend.repository.VoteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,17 +18,15 @@ import static by.itransition.backend.model.VoteType.UPVOTE;
 @Service
 @AllArgsConstructor
 public class VoteService {
-
     private final VoteRepository voteRepository;
     private final PostRepository postRepository;
-    private final AuthService authService;
 
     @Transactional
     public void vote(VoteDto voteDto) {
         Post post = postRepository.findById(voteDto.getPostId())
                 .orElseThrow(() -> new PostNotFoundException("Post Not Found with ID - " + voteDto.getPostId()));
         Optional<Vote> voteByPostAndUser = voteRepository
-                .findTopByPostAndUserOrderByVoteIdDesc(post, authService.getCurrentUser());
+                .findTopByPostAndUserOrderByVoteIdDesc(post, voteDto.getUser());
         if (voteByPostAndUser.isPresent() && voteByPostAndUser.get().getVoteType().equals(voteDto.getVoteType())) {
             throw new FunficException("You have already "
                     + voteDto.getVoteType() + "'d for this post");
@@ -46,7 +44,7 @@ public class VoteService {
         return Vote.builder()
                 .voteType(voteDto.getVoteType())
                 .post(post)
-                .user(authService.getCurrentUser())
+                .user(voteDto.getUser())
                 .build();
     }
 }

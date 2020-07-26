@@ -42,12 +42,12 @@ public class PostController {
     }
 
     @GetMapping("/by-genre/{id}")
-    public ResponseEntity<List<PostResponse>> getPostsByGenre(Long id) {
+    public ResponseEntity<List<PostResponse>> getPostsByGenre(@PathVariable Long id) {
         return status(HttpStatus.OK).body(postService.getPostsByGenre(id));
     }
 
-    @GetMapping("/by-user/{name}")
-    public ResponseEntity<List<PostResponse>> getPostsByUsername(String username) {
+    @GetMapping("/by-user/{username}")
+    public ResponseEntity<List<PostResponse>> getPostsByUsername(@PathVariable String username) {
         return status(HttpStatus.OK).body(postService.getPostsByUsername(username));
     }
 }

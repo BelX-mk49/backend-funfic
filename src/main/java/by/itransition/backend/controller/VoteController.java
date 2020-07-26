@@ -21,6 +21,9 @@ public class VoteController {
 
     @PostMapping
     public ResponseEntity<Void> vote(@RequestBody VoteDto voteDto) {
+        if (voteDto.getUser() == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         voteService.vote(voteDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }

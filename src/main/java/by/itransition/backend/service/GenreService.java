@@ -4,7 +4,7 @@ import by.itransition.backend.dto.GenreDto;
 import by.itransition.backend.exceptions.FunficException;
 import by.itransition.backend.mapper.GenreMapper;
 import by.itransition.backend.model.Genre;
-import by.itransition.backend.repo.GenreRepository;
+import by.itransition.backend.repository.GenreRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
