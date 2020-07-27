@@ -15,18 +15,12 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode
 public class UserDetailsImpl implements UserDetails {
-
     private Long id;
-
     private String username;
-
     private String email;
-
     @JsonIgnore
     private String password;
-
     private Collection<? extends GrantedAuthority> authorities;
-
     public UserDetailsImpl(Long id, String username, String email, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
@@ -37,13 +31,8 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public static UserDetailsImpl build(User user) {
-//        List<GrantedAuthority> authorities = user.getRoles().stream()
-//                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-//                .collect(Collectors.toList());
-
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
-
         return new UserDetailsImpl(
                 user.getUserId(),
                 user.getUsername(),

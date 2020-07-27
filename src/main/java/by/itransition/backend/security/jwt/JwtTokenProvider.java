@@ -36,7 +36,6 @@ public class JwtTokenProvider {
         String authorities = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining());
-
         return Jwts.builder().setSubject(auth.getName())
                 .claim("roles", authorities)
                 .setExpiration(new java.util.Date(System.currentTimeMillis() + jwtExpirationInMs))
@@ -63,10 +62,7 @@ public class JwtTokenProvider {
             return false;
         }
         Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
-        if(claims.getExpiration().before(new Date())){
-            return false;
-        }
-        return true;
+        return !claims.getExpiration().before(new Date());
     }
 
     public String resolveToken(HttpServletRequest req){
@@ -75,9 +71,5 @@ public class JwtTokenProvider {
             return bearerToken.substring(7, bearerToken.length());
         }
         return null;
-    }
-
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getSubject();
     }
 }
