@@ -19,7 +19,7 @@ import java.security.Principal;
 
 import static org.springframework.http.HttpStatus.OK;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://frontend-fanfic.herokuapp.com")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
