@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
 
-@CrossOrigin(origins = "https://frontend-fanfic.herokuapp.com/")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/posts")
 @AllArgsConstructor
