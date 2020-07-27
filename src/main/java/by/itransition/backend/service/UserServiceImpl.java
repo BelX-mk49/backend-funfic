@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     public static final String ACTIVATE_ACCOUNT_MESSAGE = "Hello, %s! \n " +
             "Thank you for registering on Fanfic" +
             "To activate your, please click on the following link (this will confirm your email address) \n" +
-            "https://backend-funfic.herokuapp.com/api/auth/activate/%s \n" +
+            "https://backend-fanfic.herokuapp.com/api/auth/activate/%s \n" +
             "Thank You";
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder encoder, MailSender mailSender) {
