@@ -47,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/**").permitAll().and().cors().and()
+        http.cors().and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
@@ -67,7 +67,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://frontend-fanfic.herokuapp.com")
-                .allowedMethods("*");
+                .allowedOrigins("*")
+                .allowedMethods("*")
+                .allowCredentials(true)
+                .allowedHeaders("*");
     }
 }

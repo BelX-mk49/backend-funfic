@@ -5,7 +5,6 @@ import by.itransition.backend.payload.resposne.CommentsResponse;
 import by.itransition.backend.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +17,6 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-@CrossOrigin(origins = "https://frontend-fanfic.herokuapp.com")
 @RestController
 @RequestMapping("/api/comments/")
 @AllArgsConstructor
